@@ -1,6 +1,7 @@
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt 
 
 # 맵에서 격자를 생성하는 코드를 작성해야함.
 # 이때 맵은 0또는 1을 가지는 2차원 배열이다.
 # 1제곱미터당 맵의 배열 크기는 100x100이다.
+# 우선, 맵은 직사각형 두개가 같은 중심을 가지고 다른 크기를 가지는 형태로 생성한다.

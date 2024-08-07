@@ -47,7 +47,7 @@ class map_line_data:
         
 
 class grid_node_map:
-    def __init__(self, map_data:map_line_data, line_div_num:int = 5, line_dist_index:int = 100):
+    def __init__(self, map_data:map_line_data, line_div_num:int = 5, line_dist_index:int = 1000):
         self.map_data = map_data
         self.line_div_num = line_div_num
         self.line_dist_index = line_dist_index
@@ -56,7 +56,7 @@ class grid_node_map:
         grid_node = np.zeros((1, self.line_div_num), dtype=np.float32)
         pass
 
-    def get_grid_line(self, index_dist:int)->np:
+    def get_grid_line(self)->np:
         left_line = self.map_data.get_left_line()
         right_line = self.map_data.get_right_line()
 
@@ -123,7 +123,9 @@ if __name__ == "__main__":
 
     grid_node = grid_node_map(map_data)
 
-    if grid_node.is_left_curve(0):
+    print(len(left))
+
+    if grid_node.is_left_curve(0,0):
         print("left curve")
     else:
         print("right curve")

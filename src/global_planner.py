@@ -52,7 +52,7 @@ class grid_node_map:
         self.line_div_num = line_div_num
         self.line_dist_index = line_dist_index
 
-    def get_grid_node(self):
+    def get_grid_node(self)->np:
         grid_node = np.zeros((1, self.line_div_num), dtype=np.float32)
         pass
 

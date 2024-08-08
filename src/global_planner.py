@@ -11,9 +11,11 @@ class map_line_data:
         right= np.array([[0, 0], [1000, 0], [1000, 1000], [0, 1000], [0, 0]], dtype=np.float32)
         left= np.array([[100, 100], [900, 100], [900, 900], [100, 900], [100, 100]], dtype=np.float32)
 
+        # append하기 위한 초기화
         self.leftline = np.array([left[0]], dtype=np.float32)
         self.rightline = np.array([right[0]], dtype=np.float32)
 
+        # 점 두 개 사이에 점 사이의 거리 x 10만큼의 점을 찍는다.
         for i in range(len(left)-1):
             dot_num = int(np.linalg.norm(left[i+1] - left[i]))*10
             for j in range(dot_num):
@@ -24,6 +26,7 @@ class map_line_data:
             for j in range(dot_num):
                 self.rightline = np.append(self.rightline, [right[i] + (right[i+1] - right[i]) * j/dot_num], axis=0)
 
+        # 초기화를 위한 첫번째 점 제거
         self.leftline = np.delete(self.leftline, 0, axis=0)
         self.rightline = np.delete(self.rightline, 0, axis=0)
 
@@ -76,12 +79,15 @@ class grid_node_map:
         # find start point
         lstart_point_index = self.map_data.get_left_circuler_index(left_index - detect_range)
         rstart_point_index = self.map_data.get_right_circuler_index(right_index - detect_range)
-        lstart_point = left_line[lstart_point_index]
-        rstart_point = right_line[rstart_point_index]
+        lstart_point:np = left_line[lstart_point_index]
+        rstart_point:np = right_line[rstart_point_index]
 
         ## 내적을 통해 왼쪽 커브인지 오른쪽 커브인지 판단
-        sum_left = np.array([0, 0], dtype=np.float32)
-        sum_right = np.array([0, 0], dtype=np.float32)
+
+        # start point에서 시작해서 detect_range안의 점들로 가는 벡터의 합을 구한다.
+        # 우선 detect_range안의 점들의 합을 구한다.
+        sum_left:np = np.array([0, 0], dtype=np.float32)
+        sum_right:np = np.array([0, 0], dtype=np.float32)
 
         for i in range(2*detect_range-1):
             lnext_point_index = self.map_data.get_left_circuler_index(left_index + i - detect_range)
@@ -90,26 +96,27 @@ class grid_node_map:
             sum_left += left_line[lnext_point_index]
             sum_right += right_line[rnext_point_index]
         
-        sum_left_vector = sum_left - lstart_point*(2*detect_range-1)
-        sum_right_vector = sum_right - rstart_point*(2*detect_range-1)
+        # 더한 점들의 개수만큼 start point를 곱하여 빼준다.
+        sum_left_vector:np = sum_left - lstart_point*(2*detect_range-1)
+        sum_right_vector:np = sum_right - rstart_point*(2*detect_range-1)
 
         # find end point
         llast_point_index = self.map_data.get_left_circuler_index(left_index + detect_range)
         rlast_point_index = self.map_data.get_right_circuler_index(right_index + detect_range)
 
         # make standard vector
-        left_standard_vector = left_line[llast_point_index] - lstart_point
-        right_standard_vector = right_line[rlast_point_index] - rstart_point
+        left_standard_vector:np = left_line[llast_point_index] - lstart_point
+        right_standard_vector:np = right_line[rlast_point_index] - rstart_point
 
         # normalize standard vector
         left_standard_vector /= np.linalg.norm(left_standard_vector)
         right_standard_vector /= np.linalg.norm(right_standard_vector)
 
-        rotation_matrix = np.array([[0, -1], [1, 0]], dtype=np.float32)
+        rotation_matrix:np = np.array([[0, -1], [1, 0]], dtype=np.float32)
 
-        dot_prod = np.dot(rotation_matrix @ left_standard_vector, sum_left_vector)\
+        dot_prod:float = np.dot(rotation_matrix @ left_standard_vector, sum_left_vector)\
               + np.dot(rotation_matrix @ right_standard_vector, sum_right_vector)
-
+        
         if dot_prod < 0:
             return True
         else:

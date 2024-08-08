@@ -1,5 +1,13 @@
 import numpy as np
+import matplotlib
+matplotlib.use('tkagg')
 import matplotlib.pyplot as plt 
+from enum import Enum
+
+class line_type(Enum):
+    UNKNOWN = -1
+    LEFT = 0
+    RIGHT = 1
 
 class map_line_data:
     def __init__(self, leftline:np, rightline:np):
@@ -30,8 +38,8 @@ class map_line_data:
         self.leftline = np.delete(self.leftline, 0, axis=0)
         self.rightline = np.delete(self.rightline, 0, axis=0)
 
-        print(self.leftline)
-        print(self.rightline)
+        # print(self.leftline)
+        # print(self.rightline)
 
         self.left_index = len(self.leftline)
         self.right_index = len(self.rightline)
@@ -50,7 +58,7 @@ class map_line_data:
         
 
 class grid_node_map:
-    def __init__(self, map_data:map_line_data, line_div_num:int = 5, line_dist_index:int = 1000):
+    def __init__(self, map_data:map_line_data, line_div_num:int = 5, line_dist_index:int = 700):
         self.map_data = map_data
         self.line_div_num = line_div_num
         self.line_dist_index = line_dist_index
@@ -59,19 +67,132 @@ class grid_node_map:
         grid_node = np.zeros((1, self.line_div_num), dtype=np.float32)
         pass
 
-    def get_grid_line(self)->np:
+    def get_vir_line(self, left_start_index:int, right_start_index:int)->np:
+        """
+        맵을 나누는 수직선들을 만드는 함수. 각각의 수직선들은 두 개의 점으로 이루어진다.
+
+        Args:
+            left_start_index (int): 왼쪽 라인의 시작 index
+            right_start_index (int): 오른쪽 라인의 시작 index
+
+        Returns:
+            vir_line_index (np): 수직선들의 왼쪽 점과 오른쪽 점의 index를 담은 배열.
+            [ [ left point index1, right point index1 ], [ ~2, ~2 ], ... ]
+        """
         left_line = self.map_data.get_left_line()
         right_line = self.map_data.get_right_line()
 
         # 처음 수직선을 그릴 기준점을 정한다.
         # 이때, 오른쪽 커브인지 외쪽 커브인지 판단한다.
         # 오른쪽 커브인 경우, 왼쪽 점을 기준으로 수직선을 그린다. 반대는 오른쪽 점으로 한다.
-        if self.is_left_curve(left_index = 0, right_index = 0):
-            pass
-        else:
-            pass
 
-    def is_left_curve(self, left_index:int, right_index:int, detect_range:int = 4)->bool:
+        flag:line_type = line_type.UNKNOWN
+        if self.is_left_curve(left_index = left_start_index, right_index = right_start_index, detect_range= self.line_dist_index):  
+            right_start_abs_index = self.map_data.get_right_circuler_index(right_start_index)
+            right_start_point:np = right_line[right_start_abs_index]
+
+            min_norm_left_index:int = left_start_index
+            abs_index = self.map_data.get_left_circuler_index(min_norm_left_index)
+            min_norm:float = np.linalg.norm(left_line[abs_index] - right_start_point)
+
+            for i in range(2 * self.line_dist_index): # 왼쪽 라인의 점들 중에서 가장 가까운 점을 찾는다. 이때 앞뒤로 line_dist_index 개 안에서 찾는다.
+                left_index = left_start_index - self.line_dist_index + i
+                left_abs_index = self.map_data.get_left_circuler_index(left_index)
+                norm = np.linalg.norm(left_line[left_abs_index] - right_start_point)
+                if norm < min_norm:
+                    min_norm = norm
+                    min_norm_left_index = left_index
+            
+            vir_line_index = np.array([[min_norm_left_index, right_start_index]], dtype=int)
+            flag = line_type.RIGHT
+        else: # 위와 같은 방법으로 오른쪽 커브인 경우.
+            left_start_abs_index = self.map_data.get_left_circuler_index(left_start_index)
+            left_start_point:np = left_line[left_start_abs_index]
+
+            min_norm_right_index:int = right_start_index
+            abs_index = self.map_data.get_right_circuler_index(min_norm_right_index)
+            min_norm:float = np.linalg.norm(right_line[abs_index] - left_start_point)
+
+            for i in range(2 * self.line_dist_index):
+                right_index = right_start_index - self.line_dist_index + i
+                right_abs_index = self.map_data.get_right_circuler_index(right_index)
+                norm = np.linalg.norm(right_line[right_abs_index] - left_start_point)
+                if norm < min_norm:
+                    min_norm = norm
+                    min_norm_right_index = right_index
+            
+            vir_line_index = np.array([[left_start_index, min_norm_right_index]], dtype=int)
+            flag = line_type.LEFT
+
+        # 나머지 수직선들을 그린다.
+        left_line_len:int = len(left_line)
+        right_line_len:int = len(right_line)
+        left_index:int = vir_line_index[0][0]
+        right_index:int = vir_line_index[0][1]
+        while True:
+            if flag == line_type.RIGHT: # 오른쪽 라인을 기준으로 왼쪽 라인을 찾는다.
+                # 다음 수직선의 오른쪽 점을 가리키는 index를 구한다.
+                right_index += self.line_dist_index
+                
+                if right_index - vir_line_index[0][1] >= right_line_len:
+                    break # 오른쪽 라인의 끝에 도달하면 종료
+                
+                # 가장 가까운 점을 구하기 위한 초기화
+                right_abs_index = self.map_data.get_right_circuler_index(right_index)
+                right_point:np = right_line[right_abs_index]
+
+                left_abs_index = self.map_data.get_left_circuler_index(left_index)
+                min_norm:float = np.linalg.norm(right_point - left_line[left_abs_index])
+                min_norm_left_index:int = left_index
+
+                for i in range(2*self.line_dist_index):
+                    index = left_index + i
+                    abs_index = self.map_data.get_left_circuler_index(index)
+                    norm = np.linalg.norm(right_point - left_line[abs_index])
+
+                    if norm < min_norm:
+                        min_norm = norm
+                        min_norm_left_index = index
+
+                left_index = min_norm_left_index
+                vir_line_index = np.append(vir_line_index, [[left_index, right_index]], axis=0)
+                if self.is_left_curve(left_index, right_index, self.line_dist_index):
+                    flag = line_type.RIGHT
+                else:
+                    flag = line_type.LEFT
+
+            else:
+                left_index += self.line_dist_index
+
+                if left_index - vir_line_index[0][0] >= left_line_len:
+                    break
+
+                left_abs_index = self.map_data.get_left_circuler_index(left_index)
+                left_point:np = left_line[left_abs_index]
+
+                right_abs_index = self.map_data.get_right_circuler_index(right_index)
+                min_norm:float = np.linalg.norm(left_point - right_line[right_abs_index])
+                min_norm_right_index:int = right_index
+
+                for i in range(2*self.line_dist_index):
+                    index = right_index + i
+                    abs_index = self.map_data.get_right_circuler_index(index)
+                    norm = np.linalg.norm(left_point - right_line[abs_index])
+
+                    if norm < min_norm:
+                        min_norm = norm
+                        min_norm_right_index = index
+                
+                right_index = min_norm_right_index
+                vir_line_index = np.append(vir_line_index, [[left_index, right_index]], axis=0)
+                if self.is_left_curve(left_index, right_index, self.line_dist_index):
+                    flag = line_type.RIGHT
+                else:
+                    flag = line_type.LEFT
+
+        return vir_line_index
+    
+    def is_left_curve(self, left_index:int, right_index:int, detect_range:int = 5)->bool:
         """index번째 점을 기준으로 detect_range만큼의 점을 이용하여 
         왼쪽 커브인지 오른쪽 커브인지 판단하는 함수.
 
@@ -140,15 +261,22 @@ if __name__ == "__main__":
 
     grid_node = grid_node_map(map_data)
 
-    print(len(left))
+    vir_line = grid_node.get_vir_line(0, 0)
+    line_point = np.array([[0, 0]], dtype=np.float32)
+    for i in range(len(vir_line)):
+        left_index = vir_line[i][0]
+        right_index = vir_line[i][1]
+        left_point = left[map_data.get_left_circuler_index(left_index)]
+        right_point = right[map_data.get_right_circuler_index(right_index)]
+        line_point = np.append(line_point, [left_point, right_point], axis=0)
 
-    if grid_node.is_left_curve(0,0):
-        print("left curve")
-    else:
-        print("right curve")
+    print(vir_line)
+    line_point = np.delete(line_point, 0, axis=0)
+
 
     # plot
     plt.plot(left[:, 0], left[:, 1], 'r', label='left')
     plt.plot(right[:, 0], right[:, 1], 'b', label='right')
+    plt.plot(line_point[:, 0], line_point[:, 1], 'g', label='vir_line')
     plt.legend()
     plt.show()

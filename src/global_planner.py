@@ -71,8 +71,18 @@ class grid_node_map:
         else:
             pass
 
-    # index번째 점을 기준으로 detect_range만큼의 점을 이용하여 왼쪽 커브인지 오른쪽 커브인지 판단
     def is_left_curve(self, left_index:int, right_index:int, detect_range:int = 4)->bool:
+        """index번째 점을 기준으로 detect_range만큼의 점을 이용하여 
+        왼쪽 커브인지 오른쪽 커브인지 판단하는 함수.
+
+        Args:
+            left_index (int): 왼쪽 라인 점의 index
+            right_index (int): 오른쪽 라인 점의 index
+            detect_range (int, optional): 고려할 기준점 앞뒤 범위(index). Defaults to 4.
+
+        Returns:
+            bool: 왼쪽 커브인 경우 True, 오른쪽 커브인 경우 False
+        """
         left_line = self.map_data.get_left_line()
         right_line = self.map_data.get_right_line()
 

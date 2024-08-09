@@ -187,8 +187,12 @@ class grid_node_map:
                 right_index = min_norm_right_index
                 vir_line_index = np.append(vir_line_index, [[left_index, right_index]], axis=0)
             
-            # 다음 기준점을 판단하기 위해 flag를 업데이트한다.
-            if self.is_left_curve(left_index, right_index, self.line_dist_index+1):
+            # 다음 기준점을 판단하기 위해 만든 수직선 앞의 트랙이 어떤 커브인지 판단한다.
+            if self.is_left_curve(left_index + self.line_dist_index,\
+                                right_index + self.line_dist_index,\
+                                int(1.1*self.line_dist_index)): 
+                # 여기서 detect_range는 1.1*self.line_dist_index로 설정한다.
+                # 딱 line_dist_index만큼만 설정하면 코너에서 
                 flag = line_type.RIGHT
             else:
                 flag = line_type.LEFT
@@ -262,7 +266,7 @@ if __name__ == "__main__":
     left = map_data.get_left_line()
     right = map_data.get_right_line()
 
-    grid_node = grid_node_map(map_data,line_dist_index=100)
+    grid_node = grid_node_map(map_data,line_dist_index=321)
 
     vir_line = grid_node.get_vir_line(0, 0)
 

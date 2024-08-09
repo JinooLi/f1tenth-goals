@@ -57,6 +57,13 @@ class map_line_data:
 
 class grid_node_map:
     def __init__(self, map_data:map_line_data, line_div_num:int = 5, line_dist_index:int = 700):
+        """_summary_
+
+        Args:
+            map_data (map_line_data): 맵 정보를 담은 클래스
+            line_div_num (int, optional): 수직선 위의 노드 개수. Defaults to 5.
+            line_dist_index (int, optional): 수직선간 최대 거리(인덱스임). Defaults to 700.
+        """
         self.map_data = map_data
         self.line_div_num = line_div_num
         self.line_dist_index = line_dist_index
@@ -154,10 +161,6 @@ class grid_node_map:
 
                 left_index = min_norm_left_index
                 vir_line_index = np.append(vir_line_index, [[left_index, right_index]], axis=0)
-                if self.is_left_curve(left_index, right_index, self.line_dist_index):
-                    flag = line_type.RIGHT
-                else:
-                    flag = line_type.LEFT
 
             else:
                 left_index += self.line_dist_index
@@ -183,21 +186,23 @@ class grid_node_map:
                 
                 right_index = min_norm_right_index
                 vir_line_index = np.append(vir_line_index, [[left_index, right_index]], axis=0)
-                if self.is_left_curve(left_index, right_index, self.line_dist_index):
-                    flag = line_type.RIGHT
-                else:
-                    flag = line_type.LEFT
+            
+            # 다음 기준점을 판단하기 위해 flag를 업데이트한다.
+            if self.is_left_curve(left_index, right_index, self.line_dist_index+1):
+                flag = line_type.RIGHT
+            else:
+                flag = line_type.LEFT
 
         return vir_line_index
     
-    def is_left_curve(self, left_index:int, right_index:int, detect_range:int = 5)->bool:
+    def is_left_curve(self, left_index:int, right_index:int, detect_range:int = 100)->bool:
         """index번째 점을 기준으로 detect_range만큼의 점을 이용하여 
         왼쪽 커브인지 오른쪽 커브인지 판단하는 함수.
 
         Args:
             left_index (int): 왼쪽 라인 점의 index
             right_index (int): 오른쪽 라인 점의 index
-            detect_range (int, optional): 고려할 기준점 앞뒤 범위(index). Defaults to 4.
+            detect_range (int, optional): 고려할 기준점 앞뒤 범위(index). Defaults to 100.
 
         Returns:
             bool: 왼쪽 커브인 경우 True, 오른쪽 커브인 경우 False
@@ -257,24 +262,18 @@ if __name__ == "__main__":
     left = map_data.get_left_line()
     right = map_data.get_right_line()
 
-    grid_node = grid_node_map(map_data)
+    grid_node = grid_node_map(map_data,line_dist_index=100)
 
     vir_line = grid_node.get_vir_line(0, 0)
-    line_point = np.array([[0, 0]], dtype=np.float32)
-    for i in range(len(vir_line)):
-        left_index = vir_line[i][0]
-        right_index = vir_line[i][1]
-        left_point = left[map_data.get_left_circuler_index(left_index)]
-        right_point = right[map_data.get_right_circuler_index(right_index)]
-        line_point = np.append(line_point, [left_point, right_point], axis=0)
-
-    print(vir_line)
-    line_point = np.delete(line_point, 0, axis=0)
-
 
     # plot
     plt.plot(left[:, 0], left[:, 1], 'r', label='left')
     plt.plot(right[:, 0], right[:, 1], 'b', label='right')
-    plt.plot(line_point[:, 0], line_point[:, 1], 'g', label='vir_line')
+    for i in range(len(vir_line)):
+        left_index = vir_line[i][0]
+        right_index = vir_line[i][1]
+        left_index = map_data.get_left_circuler_index(left_index)
+        right_index = map_data.get_right_circuler_index(right_index)
+        plt.plot([left[left_index][0], right[right_index][0]],[left[left_index][1], right[right_index][1]], 'g')
     plt.legend()
     plt.show()

@@ -266,7 +266,7 @@ if __name__ == "__main__":
     left = map_data.get_left_line()
     right = map_data.get_right_line()
 
-    grid_node = grid_node_map(map_data,line_dist_index=321)
+    grid_node = grid_node_map(map_data,line_dist_index=700)
 
     vir_line = grid_node.get_vir_line(0, 0)
 

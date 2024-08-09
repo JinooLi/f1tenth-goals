@@ -192,7 +192,7 @@ class grid_node_map:
                                 right_index + self.line_dist_index,\
                                 int(1.1*self.line_dist_index)): 
                 # 여기서 detect_range는 1.1*self.line_dist_index로 설정한다.
-                # 딱 line_dist_index만큼만 설정하면 코너에서 
+                # 딱 line_dist_index만큼만 설정하면 코너에서 어떤 커브인지 오판할 수 있기 때문이다.
                 flag = line_type.RIGHT
             else:
                 flag = line_type.LEFT

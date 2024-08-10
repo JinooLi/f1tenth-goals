@@ -57,7 +57,8 @@ class map_line_data:
 
 class grid_node_map:
     def __init__(self, map_data:map_line_data, line_div_num:int = 5, line_dist_index:int = 700):
-        """_summary_
+        """
+        맵을 나누는 수직선들을 만드는 클래스
 
         Args:
             map_data (map_line_data): 맵 정보를 담은 클래스
@@ -266,7 +267,7 @@ if __name__ == "__main__":
     left = map_data.get_left_line()
     right = map_data.get_right_line()
 
-    grid_node = grid_node_map(map_data,line_dist_index=700)
+    grid_node = grid_node_map(map_data,line_dist_index=400)
 
     vir_line = grid_node.get_vir_line(0, 0)
 

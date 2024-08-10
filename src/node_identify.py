@@ -2,12 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt 
 from enum import Enum
 
-class line_type(Enum):
+class LineType(Enum):
     UNKNOWN = -1
     LEFT = 0
     RIGHT = 1
 
-class map_line_data:
+class MapLineData:
     def __init__(self, leftline:np, rightline:np):
         self.leftline = leftline
         self.rightline = rightline
@@ -55,13 +55,13 @@ class map_line_data:
         return index % self.right_index
         
 
-class grid_node_map:
-    def __init__(self, map_data:map_line_data, line_div_num:int = 5, line_dist_index:int = 700):
+class GridNodeMap:
+    def __init__(self, map_data:MapLineData, line_div_num:int = 5, line_dist_index:int = 700):
         """
         맵을 나누는 수직선들을 만드는 클래스
 
         Args:
-            map_data (map_line_data): 맵 정보를 담은 클래스
+            map_data (MapLineData): 맵 정보를 담은 클래스
             line_div_num (int, optional): 수직선 위의 노드 개수. Defaults to 5.
             line_dist_index (int, optional): 수직선간 최대 거리(인덱스임). Defaults to 700.
         """
@@ -92,7 +92,7 @@ class grid_node_map:
         # 이때, 오른쪽 커브인지 외쪽 커브인지 판단한다.
         # 오른쪽 커브인 경우, 왼쪽 점을 기준으로 수직선을 그린다. 반대는 오른쪽 점으로 한다.
 
-        flag:line_type = line_type.UNKNOWN
+        flag:LineType = LineType.UNKNOWN
         if self.is_left_curve(left_index = left_start_index, right_index = right_start_index, detect_range= self.line_dist_index):  
             right_start_abs_index = self.map_data.get_right_circuler_index(right_start_index)
             right_start_point:np = right_line[right_start_abs_index]
@@ -110,7 +110,7 @@ class grid_node_map:
                     min_norm_left_index = left_index
             
             vir_line_index = np.array([[min_norm_left_index, right_start_index]], dtype=int)
-            flag = line_type.RIGHT
+            flag = LineType.RIGHT
         else: # 위와 같은 방법으로 오른쪽 커브인 경우.
             left_start_abs_index = self.map_data.get_left_circuler_index(left_start_index)
             left_start_point:np = left_line[left_start_abs_index]
@@ -128,7 +128,7 @@ class grid_node_map:
                     min_norm_right_index = right_index
             
             vir_line_index = np.array([[left_start_index, min_norm_right_index]], dtype=int)
-            flag = line_type.LEFT
+            flag = LineType.LEFT
 
         # 나머지 수직선들을 그린다.
         left_line_len:int = len(left_line)
@@ -136,7 +136,7 @@ class grid_node_map:
         left_index:int = vir_line_index[0][0]
         right_index:int = vir_line_index[0][1]
         while True:
-            if flag == line_type.RIGHT: # 오른쪽 라인을 기준으로 왼쪽 라인을 찾는다.
+            if flag == LineType.RIGHT: # 오른쪽 라인을 기준으로 왼쪽 라인을 찾는다.
                 # 다음 수직선의 오른쪽 점을 가리키는 index를 구한다.
                 right_index += self.line_dist_index
                 
@@ -194,9 +194,9 @@ class grid_node_map:
                                 int(1.1*self.line_dist_index)): 
                 # 여기서 detect_range는 1.1*self.line_dist_index로 설정한다.
                 # 딱 line_dist_index만큼만 설정하면 코너에서 어떤 커브인지 오판할 수 있기 때문이다.
-                flag = line_type.RIGHT
+                flag = LineType.RIGHT
             else:
-                flag = line_type.LEFT
+                flag = LineType.LEFT
 
         return vir_line_index
     
@@ -263,11 +263,11 @@ class grid_node_map:
 
 
 if __name__ == "__main__":
-    map_data = map_line_data()
+    map_data = MapLineData()
     left = map_data.get_left_line()
     right = map_data.get_right_line()
 
-    grid_node = grid_node_map(map_data,line_dist_index=400)
+    grid_node = GridNodeMap(map_data,line_dist_index=400)
 
     vir_line = grid_node.get_vir_line(0, 0)
 

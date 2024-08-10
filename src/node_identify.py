@@ -1,11 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt 
-from enum import Enum
-
-class LineType(Enum):
-    UNKNOWN = -1
-    LEFT = 0
-    RIGHT = 1
+from core.definition import LineType
 
 class MapLineData:
     def __init__(self, leftline:np, rightline:np):

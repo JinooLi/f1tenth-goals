@@ -46,3 +46,4 @@ $$\dot{\mathbf{x}}=\begin{bmatrix}0 & 1 \\ 0 & 0\end{bmatrix}\mathbf{x} + \begin
 
 $$\mathbf{x}(k+1)=\begin{bmatrix}1 & T \\ 0 & 1\end{bmatrix}\mathbf{x}(k) + \begin{bmatrix}\frac{1}{2}T^{2} \\  T\end{bmatrix}u_{1}(k), \ \ \ t=kT$$
 
+최적 입력은 어떻게 구해야할까?

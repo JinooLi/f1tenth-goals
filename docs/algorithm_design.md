@@ -30,7 +30,19 @@
 ## 최적 경로는 어떻게 알아내는가?
 위에서 주어진 노드들을 연결하는 최적의 경로를 생성한다.
 
-각 노드는 x와 y에 대해 위치와 속력을 가지는 객체이다. 이때 제어 입력은 x,y에 대한 가속도로 한다.
+각 노드는 x와 y에 대해 위치와 속력을 가지는 객체이다. 이때 제어 입력은 x, y에 대한 가속도로 한다.
 
-이때 constraint는 가속도의 최대 최소로 한다.
+이때 constraint는 가속도 크기 제한으로 한다.
+
+$$u_{1}^2 + u_{2}^2 \le a^{2}_{\text{lim}}$$
+
+point mass model을 사용한다. 이는 다음과 같이 $x$와 $y$에 대한 미분방정식으로 나타낼 수 있다. 둘 다 같은 형태이므로 $x$에 대한 것만 나타낸다.
+
+$$\mathbf{x}=\begin{bmatrix}x \\ \dot{x}\end{bmatrix}\text{ or } \begin{bmatrix}y \\ \dot{y}\end{bmatrix}$$
+
+$$\dot{\mathbf{x}}=\begin{bmatrix}0 & 1 \\ 0 & 0\end{bmatrix}\mathbf{x} + \begin{bmatrix}0 \\ 1\end{bmatrix}u_{1}$$
+
+이를 이산화하면 다음과 같다.
+
+$$\mathbf{x}(k+1)=\begin{bmatrix}1 & T \\ 0 & 1\end{bmatrix}\mathbf{x}(k) + \begin{bmatrix}\frac{1}{2}T^{2} \\  T\end{bmatrix}u_{1}(k), \ \ \ t=kT$$
 

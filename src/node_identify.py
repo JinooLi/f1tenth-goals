@@ -37,10 +37,10 @@ class MapLineData:
         self.left_index = len(self.leftline)
         self.right_index = len(self.rightline)
     
-    def get_left_line(self)->np:
+    def get_left_line(self)->np.ndarray:
         return self.leftline
     
-    def get_right_line(self)->np:
+    def get_right_line(self)->np.ndarray:
         return self.rightline
 
     def get_left_circuler_index(self, index:int)->int:
@@ -64,11 +64,10 @@ class GridNodeMap:
         self.line_div_num = line_div_num
         self.line_dist_index = line_dist_index
 
-    def get_grid_node(self)->np:
-        grid_node = np.zeros((1, self.line_div_num), dtype=np.float32)
+    def get_grid_node(self)->np.ndarray:
         pass
 
-    def get_vir_line(self, left_start_index:int, right_start_index:int)->np:
+    def get_vir_line(self, left_start_index:int, right_start_index:int)->np.ndarray:
         """
         맵을 나누는 수직선들을 만드는 함수. 각각의 수직선들은 두 개의 점으로 이루어진다.
 
@@ -77,7 +76,7 @@ class GridNodeMap:
             right_start_index (int): 오른쪽 라인의 시작 index
 
         Returns:
-            vir_line_index (np): 수직선들의 왼쪽 점과 오른쪽 점의 index를 담은 배열.
+            vir_line_index (np.ndarray): 수직선들의 왼쪽 점과 오른쪽 점의 index를 담은 배열.
             [ [ left point index1, right point index1 ], [ ~2, ~2 ], ... ]
         """
         left_line = self.map_data.get_left_line()

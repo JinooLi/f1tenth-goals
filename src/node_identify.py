@@ -8,8 +8,7 @@ class GridNodeMap:
     def __init__(self, 
                  map_data:MapLineData, 
                  line_div_num:int = 5, 
-                 line_dist_index:int = 700
-                 ):
+                 line_dist_index:int = 700):
         """
         맵을 나누는 수직선들을 만드는 클래스
 
@@ -37,19 +36,9 @@ class GridNodeMap:
             vir_line_index (np.ndarray): 수직선들의 왼쪽 점과 오른쪽 점의 index를 담은 배열.
             [ [ left point index1, right point index1 ], [ ~2, ~2 ], ... ]
         """
-        class LeftRigt:
-            def __init__(self):
-                self.line:np.ndarray
-                self.start_index:int
-        
-        left = LeftRigt()
-        right = LeftRigt()
 
-        left.start_index = left_start_index
-        right.start_index = right_start_index
-
-        left.line = self.map_data.get_left_line()
-        right.line = self.map_data.get_right_line()
+        left_line = self.map_data.get_left_line()
+        right_line = self.map_data.get_right_line()
 
         # 처음 수직선을 그릴 기준점을 정한다.
         # 이때, 오른쪽 커브인지 외쪽 커브인지 판단한다.
@@ -58,16 +47,16 @@ class GridNodeMap:
         flag:LineType = LineType.UNKNOWN
         if self.is_left_curve(left_index = left_start_index, right_index = right_start_index, detect_range= self.line_dist_index):  
             right_start_abs_index = self.map_data.get_right_mod_index(right_start_index)
-            right_start_point:np.ndarray = right.line[right_start_abs_index]
+            right_start_point:np.ndarray = right_line[right_start_abs_index]
 
             min_norm_left_index:int = left_start_index
             abs_index = self.map_data.get_left_mod_index(min_norm_left_index)
-            min_norm:float = float(np.linalg.norm(left.line[abs_index] - right_start_point))
+            min_norm:float = float(np.linalg.norm(left_line[abs_index] - right_start_point))
 
             for i in range(2 * self.line_dist_index): # 왼쪽 라인의 점들 중에서 가장 가까운 점을 찾는다. 이때 앞뒤로 line_dist_index 개 안에서 찾는다.
                 left_index = left_start_index - self.line_dist_index + i
                 left_abs_index = self.map_data.get_left_mod_index(left_index)
-                norm:float = np.linalg.norm(left.line[left_abs_index] - right_start_point)  # type: ignore
+                norm:float = np.linalg.norm(left_line[left_abs_index] - right_start_point)  # type: ignore
                 if norm < min_norm:
                     min_norm = norm
                     min_norm_left_index = left_index
@@ -76,16 +65,16 @@ class GridNodeMap:
             flag = LineType.RIGHT
         else: # 위와 같은 방법으로 오른쪽 커브인 경우.
             left_start_abs_index = self.map_data.get_left_mod_index(left_start_index)
-            left_start_point:np.ndarray = left.line[left_start_abs_index]
+            left_start_point:np.ndarray = left_line[left_start_abs_index]
 
             min_norm_right_index:int = right_start_index
             abs_index = self.map_data.get_right_mod_index(min_norm_right_index)
-            min_norm:float = np.linalg.norm(right.line[abs_index] - left_start_point) # type: ignore
+            min_norm:float = np.linalg.norm(right_line[abs_index] - left_start_point) # type: ignore
 
             for i in range(2 * self.line_dist_index):
                 right_index = right_start_index - self.line_dist_index + i
                 right_abs_index = self.map_data.get_right_mod_index(right_index)
-                norm:float = np.linalg.norm(right.line[right_abs_index] - left_start_point) # type: ignore
+                norm:float = np.linalg.norm(right_line[right_abs_index] - left_start_point) # type: ignore
                 if norm < min_norm:
                     min_norm = norm
                     min_norm_right_index = right_index
@@ -94,8 +83,8 @@ class GridNodeMap:
             flag = LineType.LEFT
 
         # 나머지 수직선들을 그린다.
-        left_line_len:int = len(left.line)
-        right_line_len:int = len(right.line)
+        left_line_len:int = len(left_line)
+        right_line_len:int = len(right_line)
         left_index:int = vir_line_index[0][0]
         right_index:int = vir_line_index[0][1]
         while True:
@@ -108,16 +97,16 @@ class GridNodeMap:
                 
                 # 가장 가까운 점을 구하기 위한 초기화
                 right_abs_index = self.map_data.get_right_mod_index(right_index)
-                right_point:np.ndarray = right.line[right_abs_index]
+                right_point:np.ndarray = right_line[right_abs_index]
 
                 left_abs_index = self.map_data.get_left_mod_index(left_index)
-                min_norm:float = np.linalg.norm(right_point - left.line[left_abs_index]) # type: ignore
+                min_norm:float = np.linalg.norm(right_point - left_line[left_abs_index]) # type: ignore
                 min_norm_left_index:int = left_index
 
                 for i in range(2*self.line_dist_index):
                     index = left_index + i
                     abs_index = self.map_data.get_left_mod_index(index)
-                    norm:float = np.linalg.norm(right_point - left.line[abs_index]) # type: ignore
+                    norm:float = np.linalg.norm(right_point - left_line[abs_index]) # type: ignore
 
                     if norm < min_norm:
                         min_norm = norm
@@ -133,16 +122,16 @@ class GridNodeMap:
                     break
 
                 left_abs_index = self.map_data.get_left_mod_index(left_index)
-                left_point:np.ndarray = left.line[left_abs_index]
+                left_point:np.ndarray = left_line[left_abs_index]
 
                 right_abs_index = self.map_data.get_right_mod_index(right_index)
-                min_norm:float = np.linalg.norm(left_point - right.line[right_abs_index]) # type: ignore
+                min_norm:float = np.linalg.norm(left_point - right_line[right_abs_index]) # type: ignore
                 min_norm_right_index:int = right_index
 
                 for i in range(2*self.line_dist_index):
                     index = right_index + i
                     abs_index = self.map_data.get_right_mod_index(index)
-                    norm = np.linalg.norm(left_point - right.line[abs_index]) # type: ignore
+                    norm = np.linalg.norm(left_point - right_line[abs_index]) # type: ignore
 
                     if norm < min_norm:
                         min_norm = norm

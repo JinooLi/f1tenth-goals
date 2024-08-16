@@ -2,6 +2,8 @@ import numpy as np
 from core.definition import MapLineData
 
 class SquareMap(MapLineData):
+    """네모 맵을 생성하는 클래스
+    """
     # 네모 맵 생성
     def __init__(self):
         right= np.array([[0, 0], [1000, 0], [1000, 1000], [0, 1000], [0, 0]], dtype=np.float32)

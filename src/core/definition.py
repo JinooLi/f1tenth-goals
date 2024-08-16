@@ -23,27 +23,55 @@ class NodeInfo:
 
 
 class MapLineData(ABC):
+    """맵의 라인 데이터를 추상화한 클래스
+    """
     @abstractmethod
     def __init__(self):
-        # 이 함수에서 맵을 데이터를 받아오거나 초기화한다.
+        """__init__ 함수에서 맵을 데이터를 받아오거나 초기화한다.
+        """
         pass
     
     @abstractmethod
     def get_left_line(self)->np.ndarray:
-        # 이 함수에서 왼쪽 라인을 배열을 반환한다.
+        """이 함수에서 왼쪽 라인을 배열을 반환한다.
+
+        Returns:
+            np.ndarray: 왼쪽 라인의 데이터
+        """
         pass
     
     @abstractmethod
     def get_right_line(self)->np.ndarray:
-        # 이 함수에서 오른쪽 라인을 배열을 반환한다.
+        """이 함수에서 오른쪽 라인을 배열을 반환한다.
+
+        Returns:
+            np.ndarray: 오른쪽 라인의 데이터
+        """
         pass
     
     @abstractmethod
     def get_left_mod_index(self, index:int)->int:
-        # 이 함수에서 왼쪽 라인의 인덱스(범위를 벗어나든 음수이든 상관 없다.)를 받아
-        # 왼쪽 라인의 절대적인 인덱스를 반환한다.
+        """이 함수에서 왼쪽 라인의 인덱스를 받아\n
+        왼쪽 라인의 절대적인 인덱스를 반환한다.
+
+        Args:
+            index (int): 범위를 벗어나는 정수여도 상관 없다.
+
+        Returns:
+            int: 왼쪽 라인의 절대적인 인덱스
+        """
         pass
     
     @abstractmethod
     def get_right_mod_index(self, index:int)->int:
+        """이 함수에서 오른쪽 라인의 인덱스(범위를 벗어나든 음수이든 상관 없다.)를 받아\n
+        오른쪽 라인의 절대적인 인덱스를 반환한다.
+
+        Args:
+            index (int): 범위를 벗어나는 정수여도 상관 없다.
+
+        Returns:
+            int: 오른쪽 라인의 절대적인 인덱스
+        """
+        
         pass

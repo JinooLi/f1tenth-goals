@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from core.definition import LineType
 
 class MapLineData:
-    def __init__(self, leftline:np, rightline:np):
+    def __init__(self, leftline:np.ndarray, rightline:np.ndarray): # type: ignore
         self.leftline = leftline
         self.rightline = rightline
 
@@ -30,9 +30,6 @@ class MapLineData:
         # 초기화를 위한 첫번째 점 제거
         self.leftline = np.delete(self.leftline, 0, axis=0)
         self.rightline = np.delete(self.rightline, 0, axis=0)
-
-        # print(self.leftline)
-        # print(self.rightline)
 
         self.left_index = len(self.leftline)
         self.right_index = len(self.rightline)
@@ -64,7 +61,7 @@ class GridNodeMap:
         self.line_div_num = line_div_num
         self.line_dist_index = line_dist_index
 
-    def get_grid_node(self)->np.ndarray:
+    def get_grid_node(self) -> np.ndarray: # type: ignore
         pass
 
     def get_vir_line(self, left_start_index:int, right_start_index:int)->np.ndarray:
@@ -89,16 +86,16 @@ class GridNodeMap:
         flag:LineType = LineType.UNKNOWN
         if self.is_left_curve(left_index = left_start_index, right_index = right_start_index, detect_range= self.line_dist_index):  
             right_start_abs_index = self.map_data.get_right_circuler_index(right_start_index)
-            right_start_point:np = right_line[right_start_abs_index]
+            right_start_point:np.ndarray = right_line[right_start_abs_index]
 
             min_norm_left_index:int = left_start_index
             abs_index = self.map_data.get_left_circuler_index(min_norm_left_index)
-            min_norm:float = np.linalg.norm(left_line[abs_index] - right_start_point)
+            min_norm:float = float(np.linalg.norm(left_line[abs_index] - right_start_point))
 
             for i in range(2 * self.line_dist_index): # 왼쪽 라인의 점들 중에서 가장 가까운 점을 찾는다. 이때 앞뒤로 line_dist_index 개 안에서 찾는다.
                 left_index = left_start_index - self.line_dist_index + i
                 left_abs_index = self.map_data.get_left_circuler_index(left_index)
-                norm = np.linalg.norm(left_line[left_abs_index] - right_start_point)
+                norm:float = np.linalg.norm(left_line[left_abs_index] - right_start_point)  # type: ignore
                 if norm < min_norm:
                     min_norm = norm
                     min_norm_left_index = left_index
@@ -107,16 +104,16 @@ class GridNodeMap:
             flag = LineType.RIGHT
         else: # 위와 같은 방법으로 오른쪽 커브인 경우.
             left_start_abs_index = self.map_data.get_left_circuler_index(left_start_index)
-            left_start_point:np = left_line[left_start_abs_index]
+            left_start_point:np.ndarray = left_line[left_start_abs_index]
 
             min_norm_right_index:int = right_start_index
             abs_index = self.map_data.get_right_circuler_index(min_norm_right_index)
-            min_norm:float = np.linalg.norm(right_line[abs_index] - left_start_point)
+            min_norm:float = np.linalg.norm(right_line[abs_index] - left_start_point) # type: ignore
 
             for i in range(2 * self.line_dist_index):
                 right_index = right_start_index - self.line_dist_index + i
                 right_abs_index = self.map_data.get_right_circuler_index(right_index)
-                norm = np.linalg.norm(right_line[right_abs_index] - left_start_point)
+                norm:float = np.linalg.norm(right_line[right_abs_index] - left_start_point) # type: ignore
                 if norm < min_norm:
                     min_norm = norm
                     min_norm_right_index = right_index
@@ -139,16 +136,16 @@ class GridNodeMap:
                 
                 # 가장 가까운 점을 구하기 위한 초기화
                 right_abs_index = self.map_data.get_right_circuler_index(right_index)
-                right_point:np = right_line[right_abs_index]
+                right_point:np.ndarray = right_line[right_abs_index]
 
                 left_abs_index = self.map_data.get_left_circuler_index(left_index)
-                min_norm:float = np.linalg.norm(right_point - left_line[left_abs_index])
+                min_norm:float = np.linalg.norm(right_point - left_line[left_abs_index]) # type: ignore
                 min_norm_left_index:int = left_index
 
                 for i in range(2*self.line_dist_index):
                     index = left_index + i
                     abs_index = self.map_data.get_left_circuler_index(index)
-                    norm = np.linalg.norm(right_point - left_line[abs_index])
+                    norm:float = np.linalg.norm(right_point - left_line[abs_index]) # type: ignore
 
                     if norm < min_norm:
                         min_norm = norm
@@ -164,16 +161,16 @@ class GridNodeMap:
                     break
 
                 left_abs_index = self.map_data.get_left_circuler_index(left_index)
-                left_point:np = left_line[left_abs_index]
+                left_point:np.ndarray = left_line[left_abs_index]
 
                 right_abs_index = self.map_data.get_right_circuler_index(right_index)
-                min_norm:float = np.linalg.norm(left_point - right_line[right_abs_index])
+                min_norm:float = np.linalg.norm(left_point - right_line[right_abs_index]) # type: ignore
                 min_norm_right_index:int = right_index
 
                 for i in range(2*self.line_dist_index):
                     index = right_index + i
                     abs_index = self.map_data.get_right_circuler_index(index)
-                    norm = np.linalg.norm(left_point - right_line[abs_index])
+                    norm = np.linalg.norm(left_point - right_line[abs_index]) # type: ignore
 
                     if norm < min_norm:
                         min_norm = norm
@@ -212,15 +209,15 @@ class GridNodeMap:
         # find start point
         lstart_point_index = self.map_data.get_left_circuler_index(left_index - detect_range)
         rstart_point_index = self.map_data.get_right_circuler_index(right_index - detect_range)
-        lstart_point:np = left_line[lstart_point_index]
-        rstart_point:np = right_line[rstart_point_index]
+        lstart_point:np.ndarray = left_line[lstart_point_index]
+        rstart_point:np.ndarray = right_line[rstart_point_index]
 
         ## 내적을 통해 왼쪽 커브인지 오른쪽 커브인지 판단
 
         # start point에서 시작해서 detect_range안의 점들로 가는 벡터의 합을 구한다.
         # 우선 detect_range안의 점들의 합을 구한다.
-        sum_left:np = np.array([0, 0], dtype=np.float32)
-        sum_right:np = np.array([0, 0], dtype=np.float32)
+        sum_left:np.ndarray = np.array([0, 0], dtype=np.float32)
+        sum_right:np.ndarray = np.array([0, 0], dtype=np.float32)
 
         for i in range(2*detect_range-1):
             lnext_point_index = self.map_data.get_left_circuler_index(left_index + i - detect_range)
@@ -230,22 +227,22 @@ class GridNodeMap:
             sum_right += right_line[rnext_point_index]
         
         # 더한 점들의 개수만큼 start point를 곱하여 빼준다.
-        sum_left_vector:np = sum_left - lstart_point*(2*detect_range-1)
-        sum_right_vector:np = sum_right - rstart_point*(2*detect_range-1)
+        sum_left_vector:np.ndarray = sum_left - lstart_point*(2*detect_range-1)
+        sum_right_vector:np.ndarray = sum_right - rstart_point*(2*detect_range-1)
 
         # find end point
         llast_point_index = self.map_data.get_left_circuler_index(left_index + detect_range)
         rlast_point_index = self.map_data.get_right_circuler_index(right_index + detect_range)
 
         # make standard vector
-        left_standard_vector:np = left_line[llast_point_index] - lstart_point
-        right_standard_vector:np = right_line[rlast_point_index] - rstart_point
+        left_standard_vector:np.ndarray = left_line[llast_point_index] - lstart_point
+        right_standard_vector:np.ndarray = right_line[rlast_point_index] - rstart_point
 
         # normalize standard vector
         left_standard_vector /= np.linalg.norm(left_standard_vector)
         right_standard_vector /= np.linalg.norm(right_standard_vector)
 
-        rotation_matrix:np = np.array([[0, -1], [1, 0]], dtype=np.float32)
+        rotation_matrix:np.ndarray = np.array([[0, -1], [1, 0]], dtype=np.float32)
 
         dot_prod:float = np.dot(rotation_matrix @ left_standard_vector, sum_left_vector)\
               + np.dot(rotation_matrix @ right_standard_vector, sum_right_vector)

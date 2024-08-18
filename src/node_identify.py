@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt 
 from core.definition import LineType, MapLineData
-import make_sqare_map as map
+import implement_defs.make_sqare_map as map
 
     
 class GridNodeMap:

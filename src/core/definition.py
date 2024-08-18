@@ -23,11 +23,6 @@ class NodeInfo:
         self.dir_num = dir_num
         self.speed_num = speed_num
         self.node_num = node_pos_num_per_ver_line * dir_num * speed_num
-    
-    @abstractmethod
-    def make_node():
-        pass
-
 
 class MapLineData(ABC):
     """맵의 라인 데이터를 추상화한 클래스

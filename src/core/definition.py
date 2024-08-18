@@ -12,6 +12,13 @@ class NodeInfo:
                   node_pos_num_per_ver_line:int, 
                   dir_num:int,
                   speed_num:int):
+        """노드의 정보를 지정하는 클래스
+
+        Args:
+            node_pos_num_per_ver_line (int): 한 라인 위에 가질 수 있는 노드 위치의 개수
+            dir_num (int): 한 위치에서 가질 수 있는 노드 방향의 개수
+            speed_num (int): 한 방향에서 가질 수 있는 노드 속력의 개수
+        """
         self.node_pos_num_per_ver_line = node_pos_num_per_ver_line
         self.dir_num = dir_num
         self.speed_num = speed_num

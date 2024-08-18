@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt 
-from core.definition import LineType, MapLineData
-import implement_defs.make_sqare_map as map
+from core.definition import LineType, MapLineData, NodeInfo
+from implement_defs.make_sqare_map import SquareMap
 
     
 class GridNodeMap:
@@ -21,10 +21,19 @@ class GridNodeMap:
         self.line_div_num = line_div_num
         self.line_dist_index = line_dist_index
 
-    def get_grid_node(self) -> np.ndarray: # type: ignore
+    def get_node(self, node_info:NodeInfo, vir_line_index:np.ndarray) -> np.ndarray: # type: ignore
+        """노드의 정보와 수직선들을 이용하여 노드를 만들고 반환하는 함수    
+
+        Args:
+            node_info (NodeInfo): 만들 노드의 정보를 담은 클래스
+            vir_line_index (np.ndarray): 수직선들의 왼쪽 점과 오른쪽 점의 index를 담은 배열.
+
+        Returns:
+            np.ndarray: 노드들의 정보를 담은 배열. [[x위치, y위치, x방향, y방향, 속력],...]
+        """
         pass
 
-    def get_vir_line(self, left_start_index:int, right_start_index:int)->np.ndarray:
+    def get_vir_line_index(self, left_start_index:int, right_start_index:int)->np.ndarray:
         """
         맵을 나누는 수직선들을 만드는 함수. 각각의 수직선들은 두 개의 점으로 이루어진다.
 
@@ -215,13 +224,13 @@ class GridNodeMap:
 
 
 if __name__ == "__main__":
-    map_data = map.SquareMap()
+    map_data = SquareMap()
     left = map_data.get_left_line()
     right = map_data.get_right_line()
 
     grid_node = GridNodeMap(map_data,line_dist_index=400)
 
-    vir_line = grid_node.get_vir_line(0, 0)
+    vir_line = grid_node.get_vir_line_index(0, 0)
 
     # plot
     plt.plot(left[:, 0], left[:, 1], 'r', label='left')

@@ -69,7 +69,7 @@ class VirLineData:
     """
     coordinate: np.ndarray = None
 
-class NodeInfo(ABC):
+class Node(ABC):
     """노드의 정보를 추상화한 클래스
     """
     def __init__(self,

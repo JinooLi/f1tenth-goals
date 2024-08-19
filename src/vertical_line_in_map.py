@@ -30,8 +30,8 @@ class VerticalLineMap:
             [ [ left point index1, right point index1 ], [ ~2, ~2 ], ... ]
 
         Returns:
-            VerLineData: 수직선들의 좌표를 담은 배열.
-            [ [ [x좌표1, y좌표1], [x좌표2, y좌표2] ], [ ~2, ~2 ], ... ]
+            VerLineData: 수직선들의 좌표를 담은 클래스.
+            VerLineData.coordinate = [ [ [left x좌표1, left y좌표1], [right x좌표1, right y좌표1] ], [ ~2, ~2 ], ... ]
         """
 
         ver_line_coord = np.zeros((len(ver_line_index), 2, 2), dtype=np.float32)

@@ -3,8 +3,23 @@ import numpy as np
 
 class PointMassNode(Node):
     """질량점 노드의 데이터를 생성하는 클래스.  
-    이 클래스는 NodeInfo 클래스를 상속받아 구현되었다.
+    이 클래스는 Node 클래스를 상속받아 구현되었다.
     """
+    def __init__(self,
+                  node_pos_num_per_ver_line:int, 
+                  dir_num:int,
+                  speed_num:int):
+        """노드의 정보를 지정하는 클래스
+
+        Args:
+            node_pos_num_per_ver_line (int): 한 라인 위에 가질 수 있는 노드 위치의 개수
+            dir_num (int): 한 위치에서 가질 수 있는 노드 방향의 개수
+            speed_num (int): 한 방향에서 가질 수 있는 노드 속력의 개수
+        """
+        self.node_pos_num_per_ver_line = node_pos_num_per_ver_line
+        self.dir_num = dir_num
+        self.speed_num = speed_num
+        self.node_num = node_pos_num_per_ver_line * dir_num * speed_num
 
     def get_node(self, vir_line_data:VirLineData) -> np.ndarray: # type: ignore
         """노드의 정보와 수직선들을 이용하여 노드를 만들고 반환하는 함수    

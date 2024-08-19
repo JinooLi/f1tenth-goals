@@ -15,9 +15,11 @@ if __name__ == "__main__":
 
     ver_coord_data = grid_line.get_ver_line_coord(ver_line_index)
 
-    node_data = PointMassNode(maximum_speed=5.0)
+    node_data = PointMassNode(ver_coord_data,maximum_speed=5.0)
 
-    node = node_data.get_node(ver_coord_data)
+    node = node_data.get_node()
+
+    print(node[3])
 
     # plot
     plt.plot(left[:, 0], left[:, 1], 'r', label='left')
@@ -26,6 +28,8 @@ if __name__ == "__main__":
     for i in range(len(ver_coord)):
         coord = np.transpose(ver_coord[i])
         plt.plot(coord[0], coord[1], 'g')
-        # 노드의 위치 체크 요망
+        for j in range(node_data.node_pos_num_per_ver_line):
+            index = j * (node_data.dir_num * (node_data.speed_num - 1) + 1)
+            plt.scatter(node[i][index][0], node[i][index][1], c='black')
     plt.legend()
     plt.show()

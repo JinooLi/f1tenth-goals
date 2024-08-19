@@ -4,6 +4,12 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
 class LineType(Enum):
+    """커브의 방향을 나타내는 열거형 클래스.
+    Args:
+        UNKNOWN (Enum): 무슨 방향 커브인지 모를 때
+        LEFT (Enum): 왼쪽 커브인 경우
+        RIGHT (Enum): 오른쪽 커브인 경우
+    """
     UNKNOWN = -1
     LEFT = 0
     RIGHT = 1

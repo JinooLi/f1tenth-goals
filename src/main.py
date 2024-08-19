@@ -1,6 +1,7 @@
 from vertical_line_in_map import VerticalLineMap
 import matplotlib.pyplot as plt 
 from implement_defs.make_sqare_map import SquareMap
+import numpy as np
 
 if __name__ == "__main__":
     map_data = SquareMap()
@@ -19,6 +20,7 @@ if __name__ == "__main__":
     plt.plot(left[:, 0], left[:, 1], 'r', label='left')
     plt.plot(right[:, 0], right[:, 1], 'b', label='right')
     for i in range(len(ver_coord)):
-        plt.plot([ver_coord[i][0][0],ver_coord[i][1][0]],[ver_coord[i][0][1],ver_coord[i][1][1]], 'g')
+        coord = np.transpose(ver_coord[i])
+        plt.plot(coord[0], coord[1], 'g')
     plt.legend()
     plt.show()

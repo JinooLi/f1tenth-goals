@@ -7,18 +7,18 @@ if __name__ == "__main__":
     left = map_data.get_left_line()
     right = map_data.get_right_line()
 
-    grid_node = VerticalLineMap(map_data,line_dist_index=400)
+    grid_line = VerticalLineMap(map_data,line_dist_index=400)
 
-    vir_line = grid_node.get_vir_line_index(0, 0)
+    ver_line_index = grid_line.get_ver_line_index(0, 0)
+
+    ver_coord_data = grid_line.get_ver_line_coord(ver_line_index)
+
+    ver_coord = ver_coord_data.coordinate
 
     # plot
     plt.plot(left[:, 0], left[:, 1], 'r', label='left')
     plt.plot(right[:, 0], right[:, 1], 'b', label='right')
-    for i in range(len(vir_line)):
-        left_index = vir_line[i][0]
-        right_index = vir_line[i][1]
-        left_index = map_data.get_left_mod_index(left_index)
-        right_index = map_data.get_right_mod_index(right_index)
-        plt.plot([left[left_index][0], right[right_index][0]],[left[left_index][1], right[right_index][1]], 'g')
+    for i in range(len(ver_coord)):
+        plt.plot([ver_coord[i][0][0],ver_coord[i][1][0]],[ver_coord[i][0][1],ver_coord[i][1][1]], 'g')
     plt.legend()
     plt.show()

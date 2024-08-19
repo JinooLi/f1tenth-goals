@@ -20,22 +20,6 @@ class VerticalLineMap:
         self.line_div_num = line_div_num
         self.line_dist_index = line_dist_index
 
-    def get_node(self, node_info:NodeInfo, vir_line_index:np.ndarray) -> np.ndarray: # type: ignore
-        """노드의 정보와 수직선들을 이용하여 노드를 만들고 반환하는 함수    
-
-        Args:
-            node_info (NodeInfo): 만들 노드의 정보를 담은 클래스
-            vir_line_index (np.ndarray): 수직선들의 왼쪽 점과 오른쪽 점의 index를 담은 배열.
-
-        Returns:
-            np.ndarray:수직선별 노드들의 정보를 담은 배열.\n
-            [ \n
-                [[x축 위치11, y축 위치11, x축 속도11, y축 속도11], [x축 위치12, y축 위치12, x축 속도12, y축 속도12],...],\n
-                [[x축 위치21, y축 위치21, x축 속도21, y축 속도21], [x축 위치22, y축 위치22, x축 속도22, y축 속도22],...],\n
-            ]
-        """
-        pass
-
     def get_vir_line_index(self, left_start_index:int, right_start_index:int)->np.ndarray:
         """
         맵을 나누는 수직선들을 만드는 함수. 각각의 수직선들은 두 개의 점으로 이루어진다.

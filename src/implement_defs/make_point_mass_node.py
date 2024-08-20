@@ -33,7 +33,7 @@ class PointMassNode(Node):
         self.node = self.make_node()
     
     def get_node(self)->np.ndarray:
-        """노드를 반환하는 함수    
+        """노드의 list를 반환하는 함수    
         Returns:
             np.ndarray:수직선별 노드들의 정보를 담은 배열.\n
             [ \n
@@ -62,7 +62,7 @@ class PointMassNode(Node):
         return pos_index * (self.dir_num * (self.speed_num - 1) + 1) + dir_index * (self.speed_num - 1) + speed_index
 
     def make_node(self) -> np.ndarray:
-        """노드를 만들고 반환하는 함수    
+        """노드의 list를 만들고 반환하는 함수    
         Returns:
             np.ndarray:수직선별 노드들의 정보를 담은 배열.\n
             [ \n

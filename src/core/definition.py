@@ -91,6 +91,6 @@ class Node(ABC):
         """수직선의 데이터를 받아 노드를 만든다.
 
         Returns:
-            np.ndarray: 노드의 데이터
+            np.ndarray: 노드의 list
         """
         pass

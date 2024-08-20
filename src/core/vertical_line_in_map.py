@@ -1,12 +1,13 @@
 import numpy as np
 from core.definition import LineType, MapLineData, VerLineData
 
-    
 class VerticalLineMap:
     def __init__(self, 
-                 map_data:MapLineData, 
-                 line_div_num:int = 5, 
-                 line_dist_index:int = 700):
+                map_data:MapLineData, 
+                line_div_num:int = 5, 
+                line_dist_index:int = 700,
+                start_x_index:int =0,
+                start_y_index:int =0):
         """
         맵을 나누는 수직선들을 만드는 클래스
 
@@ -14,14 +15,39 @@ class VerticalLineMap:
             map_data (MapLineData): 맵 정보를 담은 클래스
             line_div_num (int, optional): 수직선 위의 노드 개수. Defaults to 5.
             line_dist_index (int, optional): 수직선간 최대 거리(인덱스임). Defaults to 700.
+            start_x_index (int, optional): 수직선의 시작 x index. Defaults to 0.
+            start_y_index (int, optional): 수직선의 시작 y index. Defaults to 0.
         """
+        # init
         self.map_data = map_data
         self.left_line = map_data.get_left_line()
         self.right_line = map_data.get_right_line()
         self.line_div_num = line_div_num
         self.line_dist_index = line_dist_index
 
-    def get_ver_line_coord(self, ver_line_index:np.ndarray)->VerLineData:
+        # make vertical line
+        self.ver_line_index = self.make_ver_line_index(start_x_index, start_y_index)
+        self.ver_line_data = self.make_ver_line_coord(self.ver_line_index)
+
+    def get_ver_line_data(self)->VerLineData:
+        """수직선 데이터를 반환하는 함수
+
+        Returns:
+            VerLineData: 수직선들의 좌표를 담은 클래스.
+            VerLineData.coordinate = [ [ [left x좌표1, left y좌표1], [right x좌표1, right y좌표1] ], [ ~2, ~2 ], ... ]
+        """
+        return self.ver_line_data
+    
+    def get_ver_line_index(self)->np.ndarray:
+        """수직선의 index를 반환하는 함수
+
+        Returns:
+            ver_line_index (np.ndarray): 수직선들의 왼쪽 점과 오른쪽 점의 index를 담은 배열.
+            [ [ left point index1, right point index1 ], [ ~2, ~2 ], ... ]
+        """
+        return self.ver_line_index
+
+    def make_ver_line_coord(self, ver_line_index:np.ndarray)->VerLineData:
         """
         수직선들의 좌표를 반환하는 함수
 
@@ -49,7 +75,7 @@ class VerticalLineMap:
         return ver_line_data
         
 
-    def get_ver_line_index(self, left_start_index:int, right_start_index:int)->np.ndarray:
+    def make_ver_line_index(self, left_start_index:int, right_start_index:int)->np.ndarray:
         """
         맵을 나누는 수직선들을 만드는 함수. 각각의 수직선들은 두 개의 점으로 이루어진다.
 

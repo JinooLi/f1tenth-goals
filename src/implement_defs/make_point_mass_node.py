@@ -1,4 +1,3 @@
-from turtle import pos
 from core.definition import VerLineData, Node
 import numpy as np
 
@@ -21,6 +20,7 @@ class PointMassNode(Node):
             speed_num (int): 한 방향에서 가질 수 있는 노드 속력의 개수 (기본 값: 5)
             maximum_speed (float): 노드의 최대 속력 (기본 값: 1.0)
         """
+        # init
         self.ver_line_data = ver_line_data
         self.node_pos_num_per_ver_line = node_pos_num_per_ver_line
         self.dir_num = dir_num
@@ -28,9 +28,40 @@ class PointMassNode(Node):
         self.maximum_speed = maximum_speed
         # 점 질량은 속력이 0인 경우는 방향이 상관 없으므로 방향에 상관 없이 하나의 노드로 친다.
         self.node_num = node_pos_num_per_ver_line * (dir_num * (speed_num - 1) + 1)  
-        self.node = None
 
-    def get_node(self) -> np.ndarray:
+        # 노드를 만든다.
+        self.node = self.make_node()
+    
+    def get_node(self)->np.ndarray:
+        """노드를 반환하는 함수    
+        Returns:
+            np.ndarray:수직선별 노드들의 정보를 담은 배열.\n
+            [ \n
+                [[x축 위치11, y축 위치11, x축 속도11, y축 속도11], [x축 위치12, y축 위치12, x축 속도12, y축 속도12],...],\n
+                [[x축 위치21, y축 위치21, x축 속도21, y축 속도21], [x축 위치22, y축 위치22, x축 속도22, y축 속도22],...],\n
+            ]
+        """
+        return self.node
+    
+    def get_node_index_on_a_line(self,
+                       pos_index:int,
+                       dir_index:int,
+                       speed_index:int)->int:
+        """원하는 노드의 인덱스를 반환하는 함수  
+
+        Args:
+            pos_index (int): 수직선 위의 위치 인덱스  
+            dir_index (int): 방향 인덱스  
+            speed_index (int): 속력 인덱스  
+            
+        Returns:
+            int: 원하는 노드의 인덱스
+        """
+        if speed_index == 0:
+            return pos_index * (self.dir_num * (self.speed_num - 1) + 1)
+        return pos_index * (self.dir_num * (self.speed_num - 1) + 1) + dir_index * (self.speed_num - 1) + speed_index
+
+    def make_node(self) -> np.ndarray:
         """노드를 만들고 반환하는 함수    
         Returns:
             np.ndarray:수직선별 노드들의 정보를 담은 배열.\n
@@ -39,8 +70,6 @@ class PointMassNode(Node):
                 [[x축 위치21, y축 위치21, x축 속도21, y축 속도21], [x축 위치22, y축 위치22, x축 속도22, y축 속도22],...],\n
             ]
         """
-        if self.node is not None:
-            return self.node
 
         ver_line_coord = self.ver_line_data.coordinate
         node = np.zeros((len(ver_line_coord), self.node_num, 4), dtype=np.float32)
@@ -78,5 +107,4 @@ class PointMassNode(Node):
                         node[i][speedindex][2] = rotate_vec[0] * self.maximum_speed * (k/self.speed_num)
                         node[i][speedindex][3] = rotate_vec[1] * self.maximum_speed * (k/self.speed_num)
         
-        self.node = node
         return node

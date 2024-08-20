@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt 
-from vertical_line_in_map import VerticalLineMap
+from core.vertical_line_in_map import VerticalLineMap
 from implement_defs.make_sqare_map import SquareMap
 from implement_defs.make_point_mass_node import PointMassNode
 

@@ -82,15 +82,13 @@ class Node(ABC):
     def __init__(self):
         """
         이 init함수는 노드를 무엇을 기준으로 만들 것인지를 지정한다.
+        반드시 수직선 데이터(VerLineData)를 받아야 한다.
         """
         pass
 
     @abstractmethod
     def get_node(self)->np.ndarray:
         """수직선의 데이터를 받아 노드를 만든다.
-
-        Args:
-            ver_line_data (VerLineData): 수직선의 데이터
 
         Returns:
             np.ndarray: 노드의 데이터
